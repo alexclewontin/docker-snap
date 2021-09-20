@@ -10,6 +10,10 @@ description: |
   * This build can only access files in the home directory. So Dockerfiles and all other files used in commands like `docker build`, `docker save` and `docker load` need to be in $HOME.
   * You can change the configuration of this build by modifying the files in `/var/snap/docker/current/`.
   * Additional certificates used by the Docker daemon to authenticate with registries need to be added in `/var/snap/docker/current/etc/docker/certs.d` (instead of `/etc/docker/certs.d`).
+  * These additional certificates can also be provided via the snap configuration mechanism:
+
+      snap set docker certs.arbitrary-certificate-nickname-here.domain="your-registry-domain.com"`
+      snap set docker certs.arbitrary-certificate-nickname-here.cert="$(cat /path/to/cert-in-pem-form.crt)"`
 
   **Running Docker as normal user**
 
@@ -121,6 +125,11 @@ parts:
       - -dockerd-patches/*
       - bin/*
       - config/daemon.json
+
+  hooks:
+    plugin: nil
+    stage-packages:
+      - jq
 
   docker-cli:
     plugin: make

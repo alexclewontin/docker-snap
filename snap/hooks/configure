@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+export PATH="$SNAP/usr/bin${PATH:+:$PATH}"
+export LD_LIBRARY_PATH="$SNAP/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+
+handle_certs() {
+
+	for CERT in $(snapctl get certs | jq 'to_entries | .[].key' --raw-output); do
+		DOMAIN=$(snapctl get certs.$CERT.domain)
+		CONTENTS=$(snapctl get certs.$CERT.cert)
+		[ -z "$DOMAIN" ] && continue
+		mkdir -p $SNAP_DATA/etc/docker/certs.d/$DOMAIN
+		# Delete the certificate if it exists. If it hasn't changed, it will get repopulated
+		# but this allows users to unset certificates and thereby effectively delete them
+		rm -f $SNAP_DATA/etc/docker/certs.d/$DOMAIN/ca.crt
+		[ -z "$CONTENTS" ] && continue
+		echo "$CONTENTS" > $SNAP_DATA/etc/docker/certs.d/$DOMAIN/ca.crt
+	done
+}
+
+handle_certs
