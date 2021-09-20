@@ -16,7 +16,7 @@ These instructions are intended to get you started quickly using the open source
   * Create an `htpasswd` file, replacing "reguser" and "regpass" below with your desired credentials:
 
         $ cd $HOME && mkdir auth
-        $ sudo docker run --entrypoint htpasswd registry:2 -Bbn reguser regpass > auth/htpasswd
+        $ sudo docker run --entrypoint htpasswd registry:2.7.0 -Bbn reguser regpass > auth/htpasswd
 
   * Launch a basic authentication enabled registry server:
 
@@ -31,7 +31,7 @@ These instructions are intended to get you started quickly using the open source
                   -v `pwd`/certs:/certs  \
                   -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt \
                   -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key \
-                  registry:2
+                  registry:2.7.0
 
 * On the client nodes,
 
